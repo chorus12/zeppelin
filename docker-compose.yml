@@ -1,0 +1,53 @@
+version: '2'
+services:
+# taken from https://github.com/emirkorkmaz/cloudera-quickstart-docker-compose
+# good notes taken from http://site.clairvoyantsoft.com/installing-apache-zeppelin-on-a-hadoop-cluster/
+  quickstart.cloudera:
+    image: cloudera/quickstart:latest
+    privileged: true
+    hostname: quickstart.cloudera
+    command: /usr/bin/docker-quickstart
+    ports:
+      - "8020:8020"   # HDFS 
+      - "8022:22"     # SSH
+      - "7180:7180"   # Cloudera Manager
+      - "8888:8888"   # Hue
+      - "11000:11000" # Oozie
+      - "50070:50070" # HDFS Rest Namenode
+      - "50075:50075" # HDFS Rest Datanode
+      - "2181:2181"   # Zookeeper
+      - "8088:8088"   # YARN Resource Manager
+      - "19888:19888" # MapReduce Job History
+      - "50030:50030" # MapReduce Job Tracker
+      - "8983:8983"   # Solr
+      - "16000:16000" # Sqoop Metastore
+      - "8042:8042"   # YARN Node Manager
+      - "60010:60010" # HBase Master
+      - "60030:60030" # HBase Region
+      - "9090:9090"   # HBase Thrift
+      - "8080:8080"   # HBase Rest
+      - "7077:7077"   # Spark Master
+    tty: true
+    stdin_open: true
+    volumes:
+      - cloudera_etc_vol:/etc  # to persist all settings
+      - cloudera_var_vol:/var # to persist the data
+      - /Users/sergei/MLData:/home/cloudera/mldata # volume to exchange data with the host
+    expose:
+      - "800-90000"  #open all ports to zeppelin
+
+  zeppelin:
+    build: ./zeppelin
+    restart: always
+    ports:
+      - 7777:8080  # new port to zeppelin since 8080 is the HBase Rest 
+    volumes:
+      - zeppelin_conf:/zeppelin/conf # 
+      - ./notebook:/zeppelin/notebook # easy access to all notebooks
+    depends_on:
+      - quickstart.cloudera
+
+volumes:
+  cloudera_etc_vol:
+  cloudera_var_vol:
+  zeppelin_conf:
