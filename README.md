@@ -14,7 +14,7 @@ To run the application:
 4. Run `docker-compose build`
 5. Run `docker-compose up`
 
-**Pay attention** that zeppelin port mapping is **7777:8888** and from the host you acccess zeppelin http://localhost:7777
+**Pay attention** that zeppelin port mapping is **7777:8080** and from the host you acccess zeppelin http://localhost:7777
 
 
 
